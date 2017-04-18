@@ -13,6 +13,9 @@ AWESOMENESS = [
     'oh-so-not-meh', 'brilliant', 'ducky', 'coolio', 'incredible',
     'wonderful', 'smashing', 'lovely']
 
+INSULTS = ['stinky', 'crazy', 'wicked', 'ridiculous', 'sassy', 'surly',
+    'questionable', 'shady', 'abominable', 'weird']
+
 
 @app.route('/')
 def start_here():
@@ -30,6 +33,10 @@ def say_hello():
     for compliment in AWESOMENESS:
         compliment_string += '<option value="%s">%s</option>' % (compliment, compliment)
 
+    insult_string = ''
+    for insult in INSULTS:
+        insult_string += '<option value="%s">%s</option>' % (insult, insult)
+
     return """
     <!doctype html>
     <html>
@@ -46,9 +53,18 @@ def say_hello():
           </select>
           <input type="submit" value="Submit">
         </form>
+        <p>OR...</p>
+        <form action="/diss">
+          What's your name? <input type="text" name="person">
+          <select name="insults">
+            <option value="" disabled selected>Pick an Insult</option>
+            %s
+          </select>
+          <input type="submit" value="Submit">
+        </form>
       </body>
     </html>
-    """ % (compliment_string)
+    """ % (compliment_string, insult_string)
 
 
 @app.route('/greet')
@@ -71,6 +87,28 @@ def greet_person():
       </body>
     </html>
     """.format(player=player, compliment=compliment)
+
+
+@app.route('/diss')
+def diss_person():
+    """Insult person by name"""
+
+    player = request.args.get("person")
+
+    insult = request.args.get("insults")
+
+    return """
+    <!doctype html>
+    <html>
+      <head>
+        <title>An Insult</title>
+      </head>
+      <body>
+        Hi, {player}! I think you're {insult}!
+      </body>
+    </html>
+    """.format(player=player, insult=insult)
+
 
 
 if __name__ == '__main__':
